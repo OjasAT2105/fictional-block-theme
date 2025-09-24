@@ -27,15 +27,15 @@ add_action( 'rest_api_init', 'university_custom_rest' );
 
 function pageBanner( $args = null ) {
 
-	if ( ! isset( $args['title'] ) ) {
+	if ( ! $args['title'] ) {
 		$args['title'] = get_the_title();
 	}
 
-	if ( ! isset( $args['subtitle'] ) ) {
+	if ( ! $args['subtitle'] ) {
 		$args['subtitle'] = get_field( 'page_banner_subtitle' );
 	}
 
-	if ( ! isset( $args['photo'] ) ) {
+	if ( ! $args['photo'] ) {
 		if ( get_field( 'page_banner_background_image' ) and ! is_archive() and ! is_home() ) {
 			$args['photo'] = get_field( 'page_banner_background_image' )['sizes']['pageBanner'];
 		} else {
@@ -191,14 +191,22 @@ function makeNotePrivate( $data, $postarr ) {
 	return $data;
 }
 
-function bannerBlock() {
-	wp_register_script( 'bannerBlockScript', get_stylesheet_directory_uri() . '/build/banner.js', array( 'wp-blocks', 'wp-editor' ) );
-	register_block_type(
-		'ourblocktheme/banner',
-		array(
-			'editor_script' => 'bannerBlockScript',
-		)
-	);
+class JSXBlock {
+	function __construct( $name ) {
+		$this->name = $name;
+		add_action( 'init', array( $this, 'onInit' ) );
+	}
+
+	function onInit() {
+		wp_register_script( $this->name, get_stylesheet_directory_uri() . "/build/{$this->name}.js", array( 'wp-blocks', 'wp-editor' ) );
+		register_block_type(
+			"ourblocktheme/{$this->name}",
+			array(
+				'editor_script' => $this->name,
+			)
+		);
+	}
 }
 
-add_action( 'init', 'bannerBlock' );
+new JSXBlock( 'banner' );
+new JSXBlock( 'genericheading' );
