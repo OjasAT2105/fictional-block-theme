@@ -198,7 +198,7 @@ class JSXBlock {
 	}
 
 	function onInit() {
-		wp_register_script( $this->name, get_stylesheet_directory_uri() . "/build/{$this->name}.js", array( 'wp-blocks', 'wp-editor' ) );
+		wp_register_script( $this->name, get_stylesheet_directory_uri() . "/build/{$this->name}.js", array( 'wp-blocks', 'wp-block-editor' ) );
 		register_block_type(
 			"ourblocktheme/{$this->name}",
 			array(
